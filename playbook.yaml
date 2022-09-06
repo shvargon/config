@@ -1,0 +1,50 @@
+---
+- name: Set user fact
+  hosts: all
+  tasks:
+    - name: 
+      ansible.builtin.set_fact:
+        user_name: "{{ ansible_user_id }}"
+
+- name: ubuntu playbook
+  hosts: all
+  become: yes
+  tasks:
+    - name: Upgrade the OS (apt-get dist-upgrade)
+      ansible.builtin.apt:
+        upgrade: dist
+        update_cache: yes
+        dpkg_options: "force-confold,force-confdef"
+
+    - name: Install flatpak
+      ansible.builtin.apt:
+        name: flatpak
+        state: latest
+
+    - name: Add the flathub flatpak repository remote to the user installation
+      community.general.flatpak_remote:
+        name: flathub
+        state: present
+        flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
+
+    - include_tasks: cli/main.yml
+    - include_tasks: gui/main.yml
+
+- name: User Tasks
+  hosts: all
+  tasks:
+    - name: Install messanger
+      community.general.flatpak:
+        name: 
+          - org.telegram.desktop
+          - org.signal.Signal
+        method: user
+
+    - name: Install flatpak package
+      community.general.flatpak:
+        name:
+          - org.gnome.Evince
+          - org.gimp.GIMP
+          - org.gnome.Shotwell
+          - org.gnome.Evolution
+        method: user

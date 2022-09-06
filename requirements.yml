@@ -1,0 +1,7 @@
+---
+roles:
+  # Install a role from Ansible Galaxy.
+  - name: gantsign.oh-my-zsh
+    version: 2.4.0
+  - name: diodonfrost.p10k
+    version: 1.2.1
